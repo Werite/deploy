@@ -32,7 +32,7 @@ export default {
     hostPassword: 'password',
     // app listen on
     listenIp: '0.0.0.0',
-    listenPort: process.env.PORT || 5000,
+    listenPort: 5000,
     // ssl/README.md
     sslCrt: './app/ssl/cert.pem',
     sslKey: './app/ssl/key.pem',
