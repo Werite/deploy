@@ -15,7 +15,15 @@
 const cfg = {
     msgAvatar: 'https://eu.ui-avatars.com/api',
 };
-
+let recordingname="";
+let user = "";
+let pool_id="";
+let uploadvideo;
+let token;
+    if (getCookie('localhost')) {
+        const data = JSON.parse(getCookie('localhost'))
+        token = data.token;
+    }
 const html = {
     newline: '<br />',
     audioOn: 'fas fa-microphone',
@@ -114,12 +122,6 @@ const _EVENTS = {
 };
 
 let recordedBlobs;
-// 1. Create a `MediaSource`
-let mediaSource = new MediaSource();
-
-// 2. Create an object URL from the `MediaSource`
-var url = URL.createObjectURL(mediaSource);
-
 class RoomClient {
     constructor(
         localAudioEl,
@@ -254,6 +256,9 @@ class RoomClient {
     // ####################################################
 
     async createRoom(room_id) {
+        let recordingusername = window.localStorage.peer_name ? window.localStorage.peer_name : '';
+        user = recordingusername;
+        pool_id = room_id
         await this.socket
             .request('createRoom', {
                 room_id,
@@ -267,7 +272,7 @@ class RoomClient {
         this.socket
             .request('join', data)
             .then(
-                async function (room) {
+                function (room) {
                     if (room === 'isLocked') {
                         this.event(_EVENTS.roomLock);
                         console.log('00-WARNING ----> Room is Locked, Try to unlock by the password');
@@ -278,7 +283,7 @@ class RoomClient {
                         console.log('00-WARNING ----> Room Lobby Enabled, Wait to confirm my join');
                         return this.waitJoinConfirm();
                     }
-                    await this.joinAllowed(room);
+                    this.joinAllowed(room);
                 }.bind(this),
             )
             .catch((err) => {
@@ -2574,6 +2579,7 @@ class RoomClient {
 
     startRecording() {
         recordedBlobs = [];
+        recordingname=`${user}_${pool_id}_`
         let options = this.getSupportedMimeTypes();
         console.log('MediaRecorder supported options', options);
         options = { mimeType: options[0] };
@@ -2638,56 +2644,17 @@ class RoomClient {
         console.log('MediaRecorder started: ', evt);
     }
 
-    
-
-    // 3. Set the video's `src` to the object URL
-    var video = document.getElementById("video");
-    video.src = url;
     handleMediaRecorderData(evt) {
         console.log('MediaRecorder data: ', evt);
         if (evt.data && evt.data.size > 0) recordedBlobs.push(evt.data);
-        
-
-        // 4. On the `sourceopen` event, create a `SourceBuffer`
-        var sourceBuffer = null;
-        mediaSource.addEventListener("sourceopen", function()
-        {
-            // NOTE: Browsers are VERY picky about the codec being EXACTLY
-            // right here. Make sure you know which codecs you're using!
-            sourceBuffer = mediaSource.addSourceBuffer("video/webm; codecs=\"opus,vp8\"");
-
-            // If we requested any video data prior to setting up the SourceBuffer,
-            // we want to make sure we only append one blob at a time
-            sourceBuffer.addEventListener("updateend", appendToSourceBuffer);
-        });
-
-        // 5. Use `SourceBuffer.appendBuffer()` to add all of your chunks to the video
-        function appendToSourceBuffer()
-        {
-            if (
-                mediaSource.readyState === "open" &&
-                sourceBuffer &&
-                sourceBuffer.updating === false
-            )
-            {
-                sourceBuffer.appendBuffer(arrayOfBlobs.shift());
-            }
-
-            // Limit the total buffer size to 20 minutes
-            // This way we don't run out of RAM
-            if (
-                video.buffered.length &&
-                video.buffered.end(0) - video.buffered.start(0) > 1200
-            )
-            {
-                sourceBuffer.remove(0, video.buffered.end(0) - 1200)
-            }
-        }
-
     }
 
-    handleMediaRecorderStop(evt) {
+    async handleMediaRecorderStop(evt) {
         try {
+            document.getElementById("startRecButton").disabled = true;
+            document.getElementById("stopRecButton").disabled = true;
+            document.getElementById("pauseRecButton").disabled = true;
+            document.getElementById("resumeRecButton").disabled = true;
             console.log('MediaRecorder stopped: ', evt);
             console.log('MediaRecorder Blobs: ', recordedBlobs);
 
@@ -2697,21 +2664,107 @@ class RoomClient {
 
             const type = recordedBlobs[0].type.includes('mp4') ? 'mp4' : 'webm';
             const blob = new Blob(recordedBlobs, { type: 'video/' + type });
+            uploadvideo = blob
             const recFileName = `${date}-${time}` + '-REC.' + type;
+            recordingname+=recFileName
+            // await uploadMedia();
+            console.log("working till here")
+            // let {recname} = recordingname;
+            const videorecording = {recname : recordingname, uploadvideo: blob, token:token, pool_id:pool_id}
+            console.log(videorecording)
 
-            console.log('MediaRecorder Download Blobs');
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = recFileName;
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            }, 100);
-            console.log(`🔴 Recording FILE: ${recFileName} done 👍`);
+            const dialogbox = document.createElement("div");
+            dialogbox.innerHTML = `<div class="action-item">
+  <p>Where to store pool recording?</p>
+  <button class="upload-btn" id="upload">
+    Upload
+  </button>
+  <button class="download-btn" id="download">
+    Download
+  </button>
+  <button class="delete-btn" id="discard">
+    Discard
+  </button>
+</div>
+`
+
+            document.body.appendChild(dialogbox)
+
+            /*
+            Uploading video to S3
+            */
+            document.getElementById("discard").addEventListener("click", function() {
+                console.log('discarding video');
+                this.parentNode.parentNode.remove(); 
+                document.getElementById('startRecButton').disabled = false;
+                document.getElementById('stopRecButton').disabled = false;
+                document.getElementById('pauseRecButton').disabled = false;
+                document.getElementById('resumeRecButton').disabled = false;
+                console.log('discarding video');
+                return false;
+            });
+            const uploadVideoToS3 = dialogbox.querySelector('.upload-btn');
+            if(uploadVideoToS3) {
+                uploadVideoToS3.addEventListener('click', async () => {
+                    console.log(`upload button clicked`)
+                    const { vidRecURL } = await fetch(`/s3Url/${recordingname}`).then(res => res.json())
+                        console.log(vidRecURL)
+                        document.getElementById("upload").disabled = true;
+                        document.getElementById("upload").innerHTML="Uploading...";
+                        await fetch(vidRecURL, {
+                            method: "PUT",
+                            headers: {
+                            "Content-Type": "multipart/form-data",
+                            },
+                            body: uploadvideo
+                        }).then(async () => {
+                            const video_rec_url = vidRecURL.split('?')[0]
+                            console.log(video_rec_url)
+                            console.log(`token ${token}`)
+                            await fetch(`/api/videorecordings/insertvideorecordingurl/${pool_id}`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: token,
+                        },
+                        body: JSON.stringify({video_rec_url : video_rec_url})
+                        })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            document.getElementById("upload").innerHTML="Uploaded Successfully";
+                            console.log('Success:', data);
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                        })
+                })
+            }
+
+            /*
+            Downlaod Video to local storage
+            */
+            const downloadVideo = dialogbox.querySelector('.download-btn');
+            if(downloadVideo) {
+                downloadVideo.addEventListener('click', () => {
+                    document.getElementById("download").disabled = true;
+                    console.log("dpwnloas");
+                    console.log(`downloading video ${recordingname}`);
+                    console.log('MediaRecorder Download Blobs');
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = recordingname;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                })
+            }
+            console.log(`🔴 Recording FILE: ${recordingname} done 👍`);
         } catch (ex) {
             console.warn('Recording save failed', ex);
         }

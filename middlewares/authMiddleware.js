@@ -22,7 +22,7 @@ const protect = async (req, res, next) => {
   token = cookieValue
         }
       
-  console.log(`cookies or token: ${token}`)
+  // console.log(`cookies or token: ${token}`)
       
         if (!token) {
           return res.status(401).json({ message: "You are not logged in! Please log in to get access." });

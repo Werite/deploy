@@ -5,8 +5,11 @@ import dotenv from 'dotenv'
 import userRoutes from './routes/userRoutes.js'
 import poolRoutes from './routes/poolRoutes.js'
 import notificationRoutes from './routes/notificationRoutes.js'
+import videoRecordingsRoutes from './routes/videoRecordingsRoutes.js'
 import { promisify } from 'util'
 import jwt from 'jsonwebtoken'
+import { generateUploadURL } from './s3.js'
+
 
 dotenv.config()
 
@@ -70,7 +73,7 @@ notificationSocket.use(async function(socket, next){
 app.use('/api/users',userRoutes)
 app.use('/api/pools',poolRoutes)
 app.use('/api/notifications',notificationRoutes)
-
+app.use('/api/videorecordings', videoRecordingsRoutes)
 // Global Error Handler. IMPORTANT function params MUST start with err
 app.use((err, req, res, next) => {
   console.log(err.stack);
@@ -82,75 +85,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// import http from 'http'
-// import { Server } from 'socket.io'
-// // import express from 'express'
-// import dotenv from 'dotenv'
-// import userRoutes from './routes/userRoutes.js'
-// import poolRoutes from './routes/poolRoutes.js'
-// import notificationRoutes from './routes/notificationRoutes.js'
-// import { promisify } from 'util'
-// import jwt from 'jsonwebtoken'
 
 dotenv.config()
-
-// const app = express();
-
-// const PORT = process.env.PORT || 3000;
-// const server = app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`))
-// const io = new Server(server, {
-//   cors: {
-//     origin: '*',
-//   }})
-
-// Middleware
-// app.use(express.json()); // parse json bodies in the request object
-
-// io.use(async function(socket, next){
-//   if (socket.handshake.query && socket.handshake.query.token){
-
-//       const decoded = await promisify(jwt.verify)(socket.handshake.query.token, process.env.JWT_SECRET);
-//       socket.decoded = decoded;
-//       next();
-//   }
-//   else {
-//     next(new Error('Authentication error'));
-//   }    
-// })
-// .on('connection', (socket) => {
-
-//   console.log(`User ${socket.decoded.id} connexted!`)
-
-//   socket.join(socket.decoded.id);
-
-//   socket.on('notification', ({ userId }) => {
-
-//     console.log('noti',userId)
-
-//     socket.broadcast.to(userId).emit('notificationRefresh', {
-//       message:"hello"
-//     });
-
-//   })
-
-// }); 
-
-// Redirect requests to endpoint
-// app.use('/api/users',userRoutes)
-// app.use('/api/pools',poolRoutes)
-// app.use('/api/notifications',notificationRoutes)
-
-// // Global Error Handler. IMPORTANT function params MUST start with err
-// app.use((err, req, res, next) => {
-//   console.log(err.stack);
-//   console.log(err.name);
-//   console.log(err.code);
-
-//   res.status(500).json({
-//     message: "Something went rely wrong",
-//   });
-// });
-
 
 'use strict';
 
@@ -194,11 +130,8 @@ dependencies: {
  *
  */
 
-// const express = require('express');
-// import express from 'express'
 import cors from 'cors';
 import compression from 'compression' ;
-// import http from 'httpolyglot';
 import https from 'httpolyglot';
 import mediasoup from 'mediasoup';
 import mediasoupClient from 'mediasoup-client';
@@ -221,54 +154,18 @@ import PoolRequest from './models/PoolRequest.js'
 import Notification from './models/Notification.js'
 import cookieParser from 'cookie-parser'
 app.use(cookieParser())
-// const app = express();
-
-// const cors = require('cors');
-// const compression = require('compression');
-// const https = require('httpolyglot');
-// const mediasoup = require('mediasoup');
-// const mediasoupClient = require('mediasoup-client');
-// const config = require('./videocall/config');
-// const path = require('path');
-// const ngrok = require('ngrok');
-// const fs = require('fs');
-// const Host = require('./videocall/Host');
-// const Room = require('./videocall/Room');
-// const Peer = require('./videocall/Peer');
-// const ServerApi = require('./videocall/ServerApi');
-// const Logger = require('./videocall/Logger');
-// const log = new Logger('Server');
-// const yamlJS = require('yamljs');
-// const swaggerUi = require('swagger-ui-express');
-// // const swaggerDocument = yamlJS.load(path.join(__dirname + '/../api/swagger.yaml'));
-// const Sentry = require('@sentry/node');
-// const { CaptureConsole } = require('@sentry/integrations');
 
 // Slack API
 import CryptoJS from 'crypto-js'
 import qS from 'qs';
 
-// const CryptoJS = require('crypto-js');
-// const qS = require('qs');
 const slackEnabled = config.slack.enabled;
 const slackSigningSecret = config.slack.signingSecret;
 import bodyParser from 'body-parser';
 
-// const app = express();
-// console.log(`path of server.js:: ${import.meta.url}`)
-// console.log(options.key)
-//common JS
-// const httpsServer = https.createServer(options, app);
-// const io = require('socket.io')(httpsServer, {
-//     maxHttpBufferSize: 1e7,
-//     transports: ['websocket'],
-// });
 
 //ES modules
 import { createServer } from "http";
-// import { Server } from "socket.io";
-
-// const httpServer = http.createServer(app);
 
 
 const vidio = new Server(httpsServer, {
@@ -338,17 +235,6 @@ const dir = {
     public: path.join(__dirname, './public'),
 };
 
-// html views
-// const views = {
-//     about: path.join(__dirname, '../../', 'public/views/about.html'),
-//     landing: path.join(__dirname, '../../', 'public/views/landing.html'),
-//     login: path.join(__dirname, '../../', 'public/views/login.html'),
-//     newRoom: path.join(__dirname, '../../', 'public/views/newroom.html'),
-//     notFound: path.join(__dirname, '../../', 'public/views/404.html'),
-//     permission: path.join(__dirname, '../../', 'public/views/permission.html'),
-//     privacy: path.join(__dirname, '../../', 'public/views/privacy.html'),
-//     room: path.join(__dirname, '../../', 'public/views/Room.html'),
-// };
 
 const views = {
     about: path.join(__dirname,  './public/views/about.html'),
@@ -366,7 +252,6 @@ app.use(compression());
 app.use(express.json());
 app.use(express.static(dir.public));
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(apiBasePath + '/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)); // api docs
 
 // all start from here
 app.get('*', function (next) {
@@ -390,37 +275,6 @@ app.use((err, req, res, next) => {
         next();
     }
 });
-
-// main page
-// app.get(['/'], (req, res) => {
-//     if (hostCfg.protected == true) {
-//         hostCfg.authenticated = false;
-//         res.sendFile(views.login);
-//     } else {
-//         res.sendFile(views.landing);
-//     }
-// });
-
-// handle login on host protected
-// app.get(['/login'], (req, res) => {
-//     if (hostCfg.protected == true) {
-//         let ip = getIP(req);
-//         log.debug(`Request login to host from: ${ip}`, req.query);
-//         const { username, password } = req.query;
-//         if (username == hostCfg.username && password == hostCfg.password) {
-//             hostCfg.authenticated = true;
-//             authHost = new Host(ip, true);
-//             log.debug('LOGIN OK', { ip: ip, authorized: authHost.isAuthorized(ip) });
-//             res.sendFile(views.landing);
-//         } else {
-//             log.debug('LOGIN KO', { ip: ip, authorized: false });
-//             hostCfg.authenticated = false;
-//             res.sendFile(views.login);
-//         }
-//     } else {
-//         res.redirect('/');
-//     }
-// });
 
 // set new room name and join
 app.get(['/newroom'], (req, res) => {
@@ -454,9 +308,9 @@ app.get('/join/', (req, res) => {
 
 // join room
 app.get('/join/:id',protect,async (req, res) => {
-  console.log("\nJoining caLL\n")
-    console.log(`app.get(/join/:id)`)
-    console.log(`req.params.id:  ${req.params.id}`);
+  console.log("Joining call")
+    // console.log(`app.get(/join/:id)`)
+    // console.log(`req.params.id:  ${req.params.id}`);
     // console.log(`req.user.user_id: ${req.user.user_id}`)
     // if (hostCfg.authenticated) {
     //     res.sendFile(views.room);
@@ -470,7 +324,7 @@ app.get('/join/:id',protect,async (req, res) => {
 
         let isUserAlreadyInACall = await User.isUserInCall(user_id);
         isUserAlreadyInACall = isUserAlreadyInACall[0][0];
-        console.log(`isUdaerinCall : ${isUserAlreadyInACall}`)
+        // console.log(`isUdaerinCall : ${isUserAlreadyInACall}`)
         if (isUserAlreadyInACall) {
             console.log("user is in call")
             res.status(200).json({message : "You have already joined another call"});
@@ -479,7 +333,7 @@ app.get('/join/:id',protect,async (req, res) => {
 
         let isUserHost = await Pool.isUserHostOfPool(user_id , pool_id);
         isUserHost= isUserHost[0][0];
-        console.log(`isUserHost: ${isUserHost}`);
+        // console.log(`isUserHost: ${isUserHost}`);
         if(!isUserHost)
         {
             let isCurrentPoolActive = await Pool.isCurrentPoolActive(pool_id);
@@ -498,12 +352,12 @@ app.get('/join/:id',protect,async (req, res) => {
             return ;
         } else {
 
-            console.log("\n\n\n NOTIII \n\n\n\n")
+            // console.log("\n\n\n NOTIII \n\n\n\n")
 
             let poolData = await Pool.findById(pool_id) ;
             poolData= poolData[0][0]
 
-            console.log(poolData)
+            // console.log(`pooldata ${poolData}`)
 
             if(!poolData.noti_sent)
             {
@@ -520,33 +374,9 @@ app.get('/join/:id',protect,async (req, res) => {
                 }
                 await Pool.setPoolNotification(pool_id);
             }
-
-
-            // res.sendFile(views.room);
             res.sendFile(views.hostroom);
         }
 
-
-
-        // let isCurrentPoolActive = await Pool.isCurrentPoolActive(pool_id);
-        // isCurrentPoolActive = isCurrentPoolActive[0][0];
-        // if (!isCurrentPoolActive) {
-        //     res.status(200).json({message:"Pool Call Currently Not Active"});
-        //     return;
-        // }
-        // let isUserAllowedToJoinPool = await Pool.isUserAllowedToJoinPool(pool_id, user_id);
-        // isUserAllowedToJoinPool = isUserAllowedToJoinPool[0][0];
-        // if (!isUserAllowedToJoinPool) {
-        //     res.status(200).json({message : "asdNot authorised to join this call"});
-        //     return;
-        // }
-        //     // await Pool.setActiveStatusOfPool(user_id, pool_id, 1);
-        //     console.log("Host User")
-        //     res.sendFile(views.room);
-            // res.status(200).json({message:"Success"});
-
-        
-        // res.sendFile(views.room);
     } else {
         res.redirect('/');
     }
@@ -588,7 +418,7 @@ app.patch('/join/:id/:isactive', async (req, res) => {
 })
 
 app.patch('/update/userincall/:id', protect,async (req, res) => {
-    console.log("\n\n\nUPDATING user in call status\n\n\n");
+    console.log("UPDATING user in call status");
     let inCall = req.params.id;
     let user_id = req.user.user_id;
     await User.setUserCallStatus(user_id, inCall);
@@ -642,6 +472,13 @@ app.get(['/privacy'], (req, res) => {
 app.get(['/about'], (req, res) => {
     res.sendFile(views.about);
 });
+
+app.get('/s3Url/:recordingname', async (req, res) => {
+//   console.log(`res: ${req}`);
+  const vidRecURL = await generateUploadURL(req.params.recordingname)
+//   console.log(`vid url ${vidRecURL}`);
+  res.send({vidRecURL });
+})
 
 // ####################################################
 // API
@@ -728,11 +565,6 @@ app.post('/slack', (req, res) => {
     return res.end('`Wrong signature` - Verification failed!');
 });
 
-// not match any of page before, so 404 not found
-// app.get('*', function (req, res) {
-//     res.sendFile(views.notFound);
-// });
-
 app.use(express.static(path.join(__dirname, '/build')))
 
   app.get('*', (req, res) =>
@@ -774,33 +606,33 @@ async function ngrokStart() {
 // ####################################################
 
 httpsServer.listen(config.listenPort, () => {
-    log.log(
-        `%c
+    // log.log(
+    //     `%c
 
-	███████╗██╗ ██████╗ ███╗   ██╗      ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
-	██╔════╝██║██╔════╝ ████╗  ██║      ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
-	███████╗██║██║  ███╗██╔██╗ ██║█████╗███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝
-	╚════██║██║██║   ██║██║╚██╗██║╚════╝╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗
-	███████║██║╚██████╔╝██║ ╚████║      ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
-	╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝      ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ started...
+	// ███████╗██╗ ██████╗ ███╗   ██╗      ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ 
+	// ██╔════╝██║██╔════╝ ████╗  ██║      ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗
+	// ███████╗██║██║  ███╗██╔██╗ ██║█████╗███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝
+	// ╚════██║██║██║   ██║██║╚██╗██║╚════╝╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗
+	// ███████║██║╚██████╔╝██║ ╚████║      ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║
+	// ╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝      ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝ started...
 
-	`,
-        'font-family:monospace',
-    );
+	// `,
+    //     'font-family:monospace',
+    // );
 
-    if (config.ngrokAuthToken !== '') {
-        return ngrokStart();
-    }
-    log.debug('Settings', {
-        node_version: process.versions.node,
-        hostConfig: hostCfg,
-        announced_ip: announcedIP,
-        server: host,
-        api_docs: api_docs,
-        mediasoup_server_version: mediasoup.version,
-        mediasoup_client_version: mediasoupClient.version,
-        sentry_enabled: sentryEnabled,
-    });
+    // if (config.ngrokAuthToken !== '') {
+    //     return ngrokStart();
+    // }
+    // log.debug('Settings', {
+    //     node_version: process.versions.node,
+    //     hostConfig: hostCfg,
+    //     announced_ip: announcedIP,
+    //     server: host,
+    //     api_docs: api_docs,
+    //     mediasoup_server_version: mediasoup.version,
+    //     mediasoup_client_version: mediasoupClient.version,
+    //     sentry_enabled: sentryEnabled,
+    // });
 });
 
 // ####################################################
@@ -1201,20 +1033,20 @@ vidio.on('connection', (socket) => {
         if (!roomList.has(socket.room_id)) return;
 
         log.debug('Disconnect', getPeerName());
-        console.log(socket.room_id);
-        console.log(socket.id);
-        console.log(getPeerName().peer_name)
+        // console.log(`socket room id  ${socket.room_id}`);
+        // console.log(`socket id ${socket.id}`);
+        // console.log(`get peer name ${getPeerName().peer_name}`)
         let user_id = await User.findByUsername(getPeerName().peer_name);
-        console.log(user_id);
+        // console.log(`user_id ${user_id}`);
         user_id = user_id[0][0].user_id;
         console.log(`User: ${user_id} Disconnected`);
         await User.setUserCallStatus(user_id, 0);
         let iscurrentpoolempty = await User.isCurrentPoolEmpty(socket.room_id);
         iscurrentpoolempty = iscurrentpoolempty[0][0];
-        console.log(iscurrentpoolempty);
+        // console.log(`is current pool empty ${iscurrentpoolempty}`);
         if (!iscurrentpoolempty) {
             await Pool.setActiveStatusOfPool(socket.room_id, 0);
-            console.log(`Isactive status of ${socket.room_id} set to 0`);
+            // console.log(`Isactive status of ${socket.room_id} set to 0`);
         }
         roomList.get(socket.room_id).removePeer(socket.id);
 
