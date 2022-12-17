@@ -650,7 +650,7 @@ function joinRoom(peer_name, room_id) {
     console.log("Pool Active Status Set");
     console.log(JSON.stringify({"pool_id" : `${room_id}`}));
     console.log(`UPDATE pools SET is_active = 1 WHERE pool_id="${room_id}";`);
-    fetch(`http://localhost:5000/join/${room_id}/1`, {
+    fetch(`http://werite.in/join/${room_id}/1`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -671,7 +671,7 @@ function joinRoom(peer_name, room_id) {
         token = data.token;
     }
     console.log(`TOKEN: ${token}`)
-    fetch(`https://localhost:5000/update/userincall/${room_id}`, {
+    fetch(`https://werite.in/update/userincall/${room_id}`, {
         method: 'PATCH',
         headers: {
             "Content-Type": "application/json",
