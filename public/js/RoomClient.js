@@ -1638,7 +1638,7 @@ class RoomClient {
     exitRoom(token, pool_id) {
         this.sound('eject');
         console.log(`user ${token} left pool ${pool_id}`)
-        fetch(`https://werite.in/update/usernotincall`, {
+        fetch(`https://werite.in:5000/update/usernotincall`, {
         method: 'PATCH',
         headers: {
             "Content-Type": "application/json",
@@ -1648,12 +1648,12 @@ class RoomClient {
         .then((response) => response.json())
         .then((data) => {
             console.log('Success:', data);
-            fetch(`https://werite.in/iscurrentpoolempty/${pool_id}`)
+            fetch(`https://werite.in:5000/iscurrentpoolempty/${pool_id}`)
         .then((response) => response.json())
         .then((data) => {
             console.log(data.message);
             if (data.message === "Pool Empty") {
-                fetch(`https://werite.in/join/${pool_id}/0`, {
+                fetch(`https://werite.in:5000/join/${pool_id}/0`, {
                     method: 'PATCH',
                     headers: {
                         "Content-Type" : "application/json"
