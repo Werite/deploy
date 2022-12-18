@@ -32,7 +32,7 @@ module.exports = {
     hostPassword: 'password',
     // app listen on
     listenIp: '0.0.0.0',
-    listenPort: process.env.PORT || 3010,
+    listenPort: 5000,
     // ssl/README.md
     sslCrt: '../ssl/cert.pem',
     sslKey: '../ssl/key.pem',
