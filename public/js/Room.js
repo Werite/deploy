@@ -419,7 +419,7 @@ function whoAreYou() {
     if (getCookie('localhost')) {
         const data = JSON.parse(getCookie('localhost'))
         default_name = data.name;
-        peer_name = data.name
+        peer_name = data.username
     }
     console.log(`default name: ${default_name}`)
 
