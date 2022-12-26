@@ -238,7 +238,7 @@ async function initEnumerateDevices() {
         if (getCookie('localhost')) {
             const data = JSON.parse(getCookie('localhost'))
             default_name = data.name;
-            peer_name = data.name
+            peer_name = data.username
             window.localStorage.peer_name = peer_name
         }
         console.log(`default name: ${default_name}`)
