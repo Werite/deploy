@@ -172,7 +172,7 @@ const vidio = new Server(httpsServer, {
   maxHttpBufferSize: 1e7,
   transports: ['websocket'],
 });
-const host = 'https://' + 'werite.in' + ':' + config.listenPort; // config.listenIp
+const host = 'https://' + 'localhost' + ':' + config.listenPort; // config.listenIp
 console.log(`host: ${host}`)
 const announcedIP = config.mediasoup.webRtcTransport.listenIps[0].announcedIp;
 
@@ -368,7 +368,7 @@ app.get('/join/:id',protect,async (req, res) => {
                 {
                   if(PoolRequests[i].status==="accepted")
                   {
-                    let notification = new Notification(`${req.user.username} has Started the pool ${poolData.title}`,PoolRequests[i].user_id,"pool start",`http://werite.in:5000/join/${pool_id}`);
+                    let notification = new Notification(`${req.user.username} has Started the pool ${poolData.title}`,PoolRequests[i].user_id,"pool start",`http://localhost:5000/join/${pool_id}`);
                     notification = await notification.save();
                   }   
                 }

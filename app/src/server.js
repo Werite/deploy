@@ -124,7 +124,7 @@ const io = new Server(httpsServer, {
   maxHttpBufferSize: 1e7,
   transports: ['websocket'],
 });
-const host = 'https://' + 'werite.in' + ':' + config.listenPort; // config.listenIp
+const host = 'https://' + 'localhost' + ':' + config.listenPort; // config.listenIp
 console.log(`host: ${host}`)
 const announcedIP = config.mediasoup.webRtcTransport.listenIps[0].announcedIp;
 
