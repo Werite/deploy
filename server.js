@@ -17,8 +17,8 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 const options = {
-  key: fs.readFileSync(new URL(config.sslKey, import.meta.url), 'utf-8'),
-  cert : fs.readFileSync(new URL(config.sslCrt, import.meta.url), 'utf-8'),
+  key: fs.readFileSync(`test/fixturess/keys/agent2-key.pem`),
+  cert: fs.readFileSync(`test/fixtures/keys/agent2-cert.pem`)
     // key: fs.readFileSync(path.join(__dirname, config.sslKey), 'utf-8'),
     // cert: fs.readFileSync(path.join(__dirname, config.sslCrt), 'utf-8'),
 };
