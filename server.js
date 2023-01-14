@@ -1135,4 +1135,4 @@ function removeIP(socket) {
         }
     }
 }
-app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`))
+https.createServer(options, app).listen(PORT,console.log(`Server running on PORT ${PORT}`));
