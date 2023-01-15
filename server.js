@@ -415,6 +415,7 @@ app.patch('/join/:id/:isactive', async (req, res) => {
     let pool_id = req.params.id;
     let isactive = req.params.isactive;
     await Pool.setActiveStatusOfPool(pool_id, isactive);
+    return res.status(200).json({message:"Pool isactive status updated"});
 })
 
 app.patch('/update/userincall/:id', protect,async (req, res) => {
@@ -1135,4 +1136,4 @@ function removeIP(socket) {
         }
     }
 }
-app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`))
+https.createServer(options, app).listen(PORT,console.log(`Server running on PORT ${PORT}`));
