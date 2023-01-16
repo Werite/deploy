@@ -368,7 +368,7 @@ app.get('/join/:id',protect,async (req, res) => {
                 {
                   if(PoolRequests[i].status==="accepted")
                   {
-                    let notification = new Notification(`${req.user.username} has Started the pool ${poolData.title}`,PoolRequests[i].user_id,"pool start",`http://werite.in:5000/join/${pool_id}`);
+                    let notification = new Notification(`${req.user.username} has Started the pool ${poolData.title}`,PoolRequests[i].user_id,"pool start",`https://werite.in:5000/join/${pool_id}`);
                     notification = await notification.save();
                   }   
                 }
