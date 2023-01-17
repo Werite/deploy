@@ -129,7 +129,7 @@ export default {
             listenIps: [
                 {
                     ip: '0.0.0.0',
-                    announcedIp: 'https://werite.in'
+                    announcedIp: '162.240.10.116'
                     // announcedIp: getLocalIp(), // replace by public static IP address https://api.ipify.org
                 },
             ],
