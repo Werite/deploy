@@ -2959,7 +2959,7 @@ class RoomClient {
             console.log(video_rec_url);
             console.log(`token ${token}`);
             await fetch(
-              `/api/videorecordings/insertvideorecordingurl/${pool_id}`,
+              `/api/videoRecording/insertVideoRecordingUrl/${pool_id}`,
               {
                 method: "POST",
                 headers: {
