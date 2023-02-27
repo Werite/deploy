@@ -5,7 +5,10 @@ import dotenv from 'dotenv'
 import userRoutes from './routes/userRoutes.js'
 import poolRoutes from './routes/poolRoutes.js'
 import notificationRoutes from './routes/notificationRoutes.js'
-import videoRecordingsRoutes from './routes/videoRecordingsRoutes.js'
+import videoRecordingRoutes from "./routes/videoRecordingRoutes.js";
+import upVotesRoutes from "./routes/upVoteRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
+import downVotesRoutes from "./routes/downVoteRoutes.js";
 import { promisify } from 'util'
 import jwt from 'jsonwebtoken'
 import { generateUploadURL } from './s3.js'
@@ -73,7 +76,10 @@ notificationSocket.use(async function(socket, next){
 app.use('/api/users',userRoutes)
 app.use('/api/pools',poolRoutes)
 app.use('/api/notifications',notificationRoutes)
-app.use('/api/videorecordings', videoRecordingsRoutes)
+app.use("/api/videoRecording", videoRecordingRoutes);
+app.use("/api/upvotes", upVotesRoutes);
+app.use("/api/downvotes", downVotesRoutes);
+app.use("/api/comment", commentRoutes);
 // Global Error Handler. IMPORTANT function params MUST start with err
 app.use((err, req, res, next) => {
   console.log(err.stack);
