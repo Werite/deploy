@@ -703,7 +703,7 @@ function joinRoom(peer_name, room_id) {
       console.error("Error:", error);
     });
   console.log(`pool info`);
-  fetch(`http://localhost:8080/join/poolData/${room_id}`, {
+  fetch(`https://werite.in:5000/join/poolData/${room_id}`, {
     method: "GET",
     headers: {
       "Content-type": "application/json",
@@ -1356,7 +1356,7 @@ function handleRoomClientEvents() {
   rc.on(RoomClient.EVENTS.exitRoom, () => {
     console.log("Room Client leave room");
 
-    openURL("http://localhost:3000/app/pool");
+    openURL("https://werite.in:5000/app/pool");
   });
 }
 
