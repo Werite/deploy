@@ -1,22 +1,21 @@
-import db from '../config/db.js'
+import db from "../config/db.js";
 
 class Notification {
-  constructor( message, user_id,type="normal",link="") {
+  constructor(message, user_id, type = "normal", link = "") {
     this.message = message;
-    this.user_id= user_id;
-    this.type= type;
-    this.link= link;
+    this.user_id = user_id;
+    this.type = type;
+    this.link = link;
   }
 
   save() {
-
     let d = new Date();
     let yyyy = d.getFullYear();
     let mm = d.getMonth() + 1;
     let dd = d.getDate();
-    let hh= d.getHours();
-    let mmm= d.getMinutes();
-    let ss= d.getSeconds();
+    let hh = d.getHours();
+    let mmm = d.getMinutes();
+    let ss = d.getSeconds();
 
     let createdAtDate = `${yyyy}-${mm}-${dd} ${hh}:${mmm}:${ss}`;
 
@@ -56,11 +55,10 @@ class Notification {
   }
 
   static acceptPoolRequest(user_id) {
-    let sql = `UPDATE notifications SET viewed= 1 WHERE user_id="${user_id}";`
-    
+    let sql = `UPDATE notifications SET viewed= 1 WHERE user_id="${user_id}";`;
+
     return db.execute(sql);
   }
-
 }
 
 export default Notification;

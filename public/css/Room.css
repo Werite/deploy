@@ -50,20 +50,20 @@
     --btns-hover-scale: scale(1.1);
     --settings-bg: radial-gradient(#393939, #000000);
     /* buttons bar horizontal */
-    --btns-top: 50%;
-    --btns-right: 0%;
-    --btns-left: 10px;
+    /* --btns-top: 50%;
+    --btns-right: 60%;
+    --btns-left: 5px;
     --btns-margin-left: 0px;
-    --btns-width: 60px;
-    --btns-flex-direction: column;
-    /* buttons bar horizontal
-    --btns-top: 95%;
-    --btns-right: 25%;
+    --btns-width: fit-content;
+    --btns-flex-direction: column; */
+    /* buttons bar horizontal */
+    --btns-top: 94%;
+    --btns-right: 28%;
     --btns-left: 50%;
-    --btns-margin-left: -160px;
-    --btns-width: 320px;
+    --btns-margin-left: -325px;
+    --btns-width: 400px;
     --btns-flex-direction: row;
-    */
+   
     --vmi-wh: 15vw;
     /* https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit */
     --videoObjFit: cover;
@@ -80,7 +80,8 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: url('../images/background.jpg');
+    background: url('../images/background1.jpeg') no-repeat center center fixed;
+    background-size: cover;
 }
 
 /*--------------------------------------------------------------
@@ -127,33 +128,40 @@ body {
     z-index: 3;
     position: absolute;
     display: flex;
-    padding: 5px;
+
 
     top: var(--btns-top);
     right: var(--btns-right);
     left: var(--btns-left);
     margin-left: var(--btns-margin-left);
-    width: var(--btns-width);
-    flex-direction: var(--btns-flex-direction);
 
+    flex-direction: var(--btns-flex-direction);
+    background: rgba(0, 0, 0, 0.7);
+    /* border: var(--border); */
+
+    border-radius: 10px;
     justify-content: space-around;
-    grid-gap: 0.4rem;
+    grid-gap: 0.5rem;
 
     -webkit-transform: translate(0%, -50%);
     -ms-transform: translate(0%, -50%);
     transform: translate(0%, -50%);
-
+    background: rgba(0, 0, 0, 0.7);
     /* border: var(--border); */
+
     border-radius: 10px;
+    padding: 5px 0;
+    margin-bottom: 20px;
 }
 
+
 #control button {
-    font-size: 1.2rem;
+    font-size: 2.2rem;
     padding: 10px;
     transition: all 0.3s ease-in-out;
-    background: rgba(0, 0, 0, 0.7);
+   background: transparent;
     border-radius: 10px;
-    border: var(--border);
+
     /* box-shadow: var(--box-shadow); */
 }
 
@@ -738,7 +746,8 @@ button:hover {
     margin: auto;
     padding: 10px;
     min-width: 320px;
-    background: var(--body-bg);
+    background: url('../images/background1.jpeg') no-repeat center center fixed;
+    background-size: cover;
     border: var(--border);
     box-shadow: var(--box-shadow);
     border-radius: 10px;

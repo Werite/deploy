@@ -1,22 +1,35 @@
-import db from '../config/db.js'
+import db from "../config/db.js";
 
 class Pool {
-  constructor(title, category, meritRequired ,discussionType, spectatorsAllowed, stance,guts, source ,  duration, isActive, user_id) {
+  constructor(
+    title,
+    category,
+    meritRequired,
+    discussionType,
+    spectatorsAllowed,
+    stance,
+    guts,
+    source,
+    duration,
+    isActive,
+    user_id,
+    peopleAllowed
+  ) {
     this.title = title;
     this.category = category;
     this.meritRequired = meritRequired;
     this.discussionType = discussionType;
     this.spectatorsAllowed = spectatorsAllowed;
-    this.stance= stance;
-    this.guts= guts;
-    this.source= source;
-    this.duration= duration;
-    this.isActive= isActive;
-    this.user_id= user_id;
+    this.stance = stance;
+    this.guts = guts;
+    this.source = source;
+    this.duration = duration;
+    this.isActive = isActive;
+    this.user_id = user_id;
+    this.peopleAllowed = peopleAllowed;
   }
 
   save() {
-
     let sql = `
     INSERT INTO pools
     (   
@@ -30,7 +43,8 @@ class Pool {
       source ,  
       duration, 
       is_active,
-      user_id
+      user_id,
+      people_allowed
     )
     VALUES(
       '${this.title}',
@@ -43,7 +57,8 @@ class Pool {
       '${this.source}',
       '${this.duration}',
       '${this.isActive}',
-      '${this.user_id}'
+      '${this.user_id}',
+      '${this.peopleAllowed}' 
     )
     `;
 
@@ -51,13 +66,13 @@ class Pool {
   }
 
   static findAll(user_id) {
-    let sql = `SELECT * FROM pools WHERE user_id!= ${user_id};`;
+    let sql = `SELECT * FROM pools WHERE user_id!= ${user_id} ORDER BY  created_at DESC;`;
 
     return db.execute(sql);
   }
 
   static findMy(user_id) {
-    let sql = `SELECT * FROM pools WHERE user_id= ${user_id};`;
+    let sql = `SELECT * FROM pools WHERE user_id= ${user_id} ORDER BY created_at DESC;`;
 
     return db.execute(sql);
   }
@@ -67,30 +82,30 @@ class Pool {
 
     return db.execute(sql);
   }
-  
+
   static isUserHostOfPool(user_id, pool_id) {
-    let sql = `SELECT * FROM pools WHERE pool_id= ${pool_id} and user_id= ${user_id};`
+    let sql = `SELECT * FROM pools WHERE pool_id= ${pool_id} and user_id= ${user_id};`;
     return db.execute(sql);
   }
   static setActiveStatusOfPool(pool_id, isactive) {
-    let sql = `UPDATE pools SET is_active = ${isactive} WHERE pool_id=${pool_id};`
+    let sql = `UPDATE pools SET is_active = ${isactive} WHERE pool_id=${pool_id};`;
     return db.execute(sql);
   }
 
   static isCurrentPoolActive(pool_id) {
-    let sql = `SELECT * FROM pools WHERE is_active = 1 AND pool_id="${pool_id}";`
+    let sql = `SELECT * FROM pools WHERE is_active = 1 AND pool_id="${pool_id}";`;
     return db.execute(sql);
   }
 
   static isUserAllowedToJoinPool(pool_id, user_id) {
-    let sql = `SELECT * FROM pools_requests WHERE status="accepted" AND user_id="${user_id}" AND pool_id="${pool_id}";`
+    let sql = `SELECT * FROM pools_requests WHERE status="accepted" AND user_id="${user_id}" AND pool_id="${pool_id}";`;
     return db.execute(sql);
   }
 
   static setPoolNotification(pool_id) {
-    let sql = `UPDATE pools SET noti_sent= 1 WHERE pool_id=${pool_id};`
+    let sql = `UPDATE pools SET noti_sent= 1 WHERE pool_id=${pool_id};`;
     return db.execute(sql);
-  } 
+  }
 }
 
 export default Pool;
