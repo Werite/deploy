@@ -3,7 +3,7 @@ import {
   getAllUpVotes,
   removeUpvote,
   UpVoteVideo,
-} from "../controllers/UpvoteController.js";
+} from "../controllers/upVoteController.js";
 
 const router = express.Router();
 
