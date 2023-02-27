@@ -55,7 +55,7 @@ class User {
       '${createdAtDate}',
       '${this.username}',
       '100',
-      '${this.is_active}',
+      '0',
       '0'
     )
     `;
